@@ -1,5 +1,5 @@
 
-## Demo: http://api-test-project.kadir.website
+## Demo: http://test-project.kadir.website
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
