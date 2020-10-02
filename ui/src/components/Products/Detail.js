@@ -1,21 +1,21 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
-import { SELECT_PRODUCT } from '../../actions/product';
+import { SELECT_PRODUCT, SET_SHOPPING_PRODUCT } from '../../actions/product';
 
 const Detail = () => {
 
     const dispatch = useDispatch();
     const history = useHistory();
     // get store in products
-    const { selectedProduct } = useSelector(rootReducer => rootReducer.productReducer);
+    let { selectedProduct, shopping } = useSelector(rootReducer => rootReducer.productReducer);
 
     // check has a selected product
     if (!selectedProduct) {
         history.push("/");
     }
 
-    const handleClearSelectedProduct = async (product) => {
+    const handleClearSelectedProduct = async () => {
         // on loading clear local storage
         dispatch({
             type: SELECT_PRODUCT,
@@ -25,6 +25,40 @@ const Detail = () => {
         })
         // send detail page
         history.push("/detail");
+    }
+
+    const handleAddShoppingBasket = async (product) => {
+
+        let index = shopping.basket.findIndex(item => item.id.toString() === product.id.toString());
+        console.log(shopping)
+        if (index > -1) {
+            shopping.basket[index].quantity += 1;
+            shopping.total += parseFloat(product.price);
+            dispatch({
+                type: SET_SHOPPING_PRODUCT,
+                payload: {
+                    shopping
+                }
+            })
+        }
+        else {
+            shopping.basket.push({
+                id: product.id,
+                name: product.productName,
+                quantity: 1,
+                img: product.image,
+                price: parseFloat(product.price),
+            });
+            shopping.total += parseFloat(product.price);
+
+            // set selected product in redux
+            dispatch({
+                type: SET_SHOPPING_PRODUCT,
+                payload: {
+                    shopping
+                }
+            })
+        }
     }
 
     return (
@@ -51,7 +85,7 @@ const Detail = () => {
                 <p><span role="img" aria-label="xxx" className="emoji-left">📦</span> {selectedProduct.quantity}</p>
                 <p><span className="emoji-left">🏷</span> {selectedProduct.price}€</p>
             </div>
-            <span className="product__link">
+            <span className="product__link" onClick={() => handleAddShoppingBasket(selectedProduct)}>
                 <span role="img" aria-label="xxx" className="emoji-left">🛒</span>
                 <span style={{ cursor: "pointer" }}>Add to shopping card ({selectedProduct.price}€)</span>
             </span>

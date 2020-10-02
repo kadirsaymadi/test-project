@@ -50,7 +50,7 @@ const Index = () => {
                                 <h6 className="card__detail card__detail--price">{product.price}€</h6>
                             </div>
                         </div>
-                        <span className="card__link" onClick={() => handleClickProduct(product)}>
+                        <span style={{ cursor: "pointer" }} className="card__link" onClick={() => handleClickProduct(product)}>
                             <span>Detail <i className="emoji-right"><span role="img" aria-label="">👉</span></i></span>
                         </span>
                     </figure>

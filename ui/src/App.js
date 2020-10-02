@@ -1,17 +1,71 @@
 import React, { useState } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { SET_SHOPPING_PRODUCT } from './actions/product';
 // css
 import './styles/loader.css';
 import './styles/style.css';
 // components
 import Index from './components/Products/List';
 import Detail from './components/Products/Detail.js';
+
 const App = () => {
 
   const initialState = {
     basketModal: false,
   }
-  const [state, setState] = useState(initialState)
+  const dispatch = useDispatch();
+  const [state, setState] = useState(initialState);
+  let { shopping } = useSelector(rootReducer => rootReducer.productReducer);
+
+  // remove item from shopping card
+  const handleRemove = async (product) => {
+    let index = shopping.basket.findIndex(item => item.id.toString() === product.id.toString());
+    if (index > -1) {
+      let price = shopping.basket[index].price * shopping.basket[index].quantity;
+      shopping.total -= price;
+      shopping.basket = await shopping.basket.filter(item => item.id.toString() !== product.id.toString()); // remove deleted data in old datas
+      dispatch({
+        type: SET_SHOPPING_PRODUCT,
+        payload: {
+          shopping
+        }
+      })
+    }
+  }
+
+  // increase one
+  const handleIncrease = async (product) => {
+    let index = shopping.basket.findIndex(item => item.id.toString() === product.id.toString());
+    if (index > -1) {
+      shopping.total += product.price;
+      shopping.basket[index].quantity += 1;
+      dispatch({
+        type: SET_SHOPPING_PRODUCT,
+        payload: {
+          shopping
+        }
+      })
+    }
+  }
+
+  // one decrease
+  const handleDecrease = async (product) => {
+    let index = shopping.basket.findIndex(item => item.id.toString() === product.id.toString());
+    if (index > -1) {
+
+      if (shopping.basket[index].quantity > 1) {
+        shopping.total -= product.price;
+        shopping.basket[index].quantity -= 1;
+        dispatch({
+          type: SET_SHOPPING_PRODUCT,
+          payload: {
+            shopping
+          }
+        })
+      }
+    }
+  }
 
   return (
     <div className="App">
@@ -21,8 +75,54 @@ const App = () => {
       <div style={{ display: state.basketModal ? "block" : "none" }} className="modal">
         {/* Modal content */}
         <div className="modal-content">
+          <span style={{ fontSize: "25px" }}>Your Shopping List..</span>
           <span onClick={() => setState(prevState => ({ ...prevState, basketModal: false }))} className="close">×</span>
-          <p>Some text in the Modal..</p>
+
+          <div className="shoppingList" style={{ margin: "15px" }}>
+            {
+              shopping.basket.map(product => (<div key={product.id} className="shoppingItem">
+                <span className="shoppingImg shoppingField" role="img" aria-label="xxxx">{product.img}</span>
+                <span className="shoppingTitle shoppingField">{product.title}</span>
+                <span className="shoppingPrice shoppingField">Price: {product.price}€</span>
+                <span className="shoppingQuantity shoppingField">
+                  Quantity:
+                <button type="button"
+                    style={{
+                      fontSize: "30px", padding: "0px", margin: "0 10px", border: "none", background: "none"
+                    }}
+                    onClick={() => handleDecrease(product)}
+                  >-</button>
+                  <input type="text"
+                    disabled
+                    onChange={() => { }}
+                    style={{ padding: "5px", width: "70px", textAlign: "center", fontSize: "23px", color: "green" }}
+                    value={product.quantity} />
+                  <button type="button"
+                    style={{
+                      fontSize: "30px", padding: "0px", margin: "0 10px", border: "none", background: "none"
+                    }}
+                    onClick={() => handleIncrease(product)}
+                  >+</button>
+                </span>
+                <span className="shoppingTotal shoppingField">Total: {product.quantity * product.price}€</span>
+                <span className="shoppingRemove shoppingField">
+                  <button style={{
+                    fontSize: "15px", color: "red", background: "none", border: "none", cursor: "pointer"
+                  }}
+                    onClick={() => handleRemove(product)}>
+                    Remove
+                </button>
+                </span>
+              </div>))
+            }
+            <div style={{
+              fontSize: "30px",
+              display: "flex",
+              justifyContent: "flex-end",
+              color: "#58cc1f",
+            }}>Total: {shopping.total}€</div>
+          </div>
+
         </div>
       </div>
       <hr />

@@ -1,12 +1,17 @@
 import {
     GET_PRODUCTS, GET_PRODUCTS_SUCCESS, GET_PRODUCTS_FAIL,
-    SELECT_PRODUCT
+    SELECT_PRODUCT,
+    SET_SHOPPING_PRODUCT
 } from "../actions/product"; // action types
 
 // default initial state
 const INITIAL_STATE = {
     products: [],
-    selectedProduct: null
+    shopping: {
+        basket: [],
+        total: 0,
+    },
+    selectedProduct: null,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -29,6 +34,11 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 selectedProduct: action.payload.selectedProduct,
+            };
+        case SET_SHOPPING_PRODUCT:
+            return {
+                ...state,
+                shopping: action.payload.shopping,
             };
         default:
             return { ...state };

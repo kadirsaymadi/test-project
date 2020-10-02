@@ -3,6 +3,7 @@ export const GET_PRODUCTS_SUCCESS = "GET_PRODUCTS_SUCCESS";
 export const GET_PRODUCTS_FAIL = "GET_PRODUCTS_FAIL";
 
 export const SELECT_PRODUCT = "SELECT_PRODUCT";
+export const SET_SHOPPING_PRODUCT = "SET_SHOPPING_PRODUCT";
 
 // login action
 export const getProducts = (user) => {

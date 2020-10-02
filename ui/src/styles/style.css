@@ -363,6 +363,7 @@
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  z-index: 9999999 !important;
 }
 
 /* Modal Content */
@@ -397,4 +398,18 @@
     flex: 1;
     /* justify-content: center; */
     align-items: center;
+}
+
+.shoppingItem{
+  display: flex;
+}
+.shoppingField{
+  flex:1;
+  display:inline-block;
+  font-size: 24px;
+}
+
+.shoppingImg{
+  text-align: center;
+  font-size: 40px;
 }
